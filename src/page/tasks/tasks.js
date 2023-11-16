@@ -19,6 +19,9 @@ export default function Tasks() {
       console.log(err);
     }
   };
+  const upcomingTasks = listTasks.filter((t) => t.done === 0);
+  const completedTasks = listTasks.filter((t) => t.done === 1);
+
   return (
     <div className="App">
       <header>
@@ -47,7 +50,7 @@ export default function Tasks() {
               </tr>
             </thead>
             <tbody>
-              {listTasks.map((t) => (
+              {upcomingTasks.map((t) => (
                 <tr key={t.id}>
                   <td>{t.name}</td>
                   <td>{t.priority}</td>
@@ -72,7 +75,15 @@ export default function Tasks() {
                 <th>Deadline</th>
               </tr>
             </thead>
-            <tbody>{/* content */}</tbody>
+            <tbody>
+              {completedTasks.map((t) => (
+                <tr key={t.id}>
+                  <td>{t.name}</td>
+                  <td>{t.priority}</td>
+                  <td>{t.deadeline}</td>
+                </tr>
+              ))}{" "}
+            </tbody>
           </table>
         </div>
       </main>
