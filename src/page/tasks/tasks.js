@@ -4,13 +4,16 @@ import axios from "axios";
 
 export default function Tasks() {
   const [listTasks, setListTasks] = useState([]);
+  const [tasks, setTasks] = useState({});
+  const [count, setCount] = useState(0);
+  const userLogin = JSON.parse(localStorage.getItem("userLogin")) || {};
   useEffect(() => {
     const fetchdata = async () => {
       const response = await getData("task");
       setListTasks(response);
     };
     fetchdata();
-  }, []);
+  }, [count]);
   const getData = async (resource) => {
     try {
       const response = await axios.get("http://localhost:9999/" + resource);
@@ -21,6 +24,24 @@ export default function Tasks() {
   };
   const upcomingTasks = listTasks.filter((t) => t.done === 0);
   const completedTasks = listTasks.filter((t) => t.done === 1);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setTasks({ ...tasks, [name]: value });
+  };
+  const handleAddTask = () => {
+    if (userLogin.role === 0) {
+      return;
+    } else {
+      axios
+        .post("http://localhost:9999/" + "task", tasks)
+        .then((res) => {
+          setCount(count + 1);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  };
 
   return (
     <div className="App">
@@ -29,14 +50,34 @@ export default function Tasks() {
       </header>
       <main>
         <div className="task-form">
-          <input type="text" id="task" placeholder="Enter task..." />
-          <select id="priority">
+          <input
+            type="text"
+            id="task"
+            placeholder="Enter task..."
+            name="name"
+            value={tasks.name}
+            onChange={handleChange}
+          />
+          <select
+            id="priority"
+            name="priority"
+            value={tasks.priority}
+            onChange={handleChange}
+          >
             <option value="top">Top Priority</option>
             <option value="middle">Middle Priority</option>
             <option value="low">Less Priority</option>
           </select>
-          <input type="date" id="deadline" />
-          <button id="add-task">Add Task</button>
+          <input
+            type="date"
+            id="deadeline"
+            name="deadeline"
+            value={tasks.deadeline}
+            onChange={handleChange}
+          />
+          <button id="add-task" onClick={handleAddTask}>
+            Add Task
+          </button>
         </div>
         <h2 className="heading">Upcoming Tasks</h2>
         <div className="task-list" id="task-list">
