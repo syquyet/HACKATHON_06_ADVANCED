@@ -7,33 +7,29 @@ export default function Login() {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
-  const handleSubmit = async (e) => {
-    localStorage.setItem("userLogin", JSON.stringify(formData));
-    const reponse = await axios.post("http://localhost:9999/login");
-    console.log(1111, reponse);
-    if (reponse.status) {
-      
-      alert("đăng nhập thành công");
-    } else {
-      alert("đăng nhập thất bại");
-    }
+  const handleSubmit =  (e) => {
+    e.preventDefault();
+    
+    axios
+      .post ('http://localhost:9999/login', formData)
+      .then((res) => {
+        localStorage.setItem("userLogin", JSON.stringify(res.data));
+        window.location = "/tasks";
+      })
+      .catch((err) => console.error(err));
   };
-
+ 
   return (
-    <form
-      className="form-container"
-      onSubmit={handleSubmit}
-      method="post"
-    >
+    <form className="form-container" onSubmit={handleSubmit}>
       <h2>Đăng nhập</h2>
       <hr />
       <label htmlFor="username">username:</label>
       <input
         className="input-form"
         type="text"
-        name="username"
-        placeholder="username"
-        value={formData.username}
+        name="name"
+        placeholder="name"
+        value={formData.name}
         onChange={handleChange}
       />
       <p className="error" id="error-email" />
